@@ -10,14 +10,15 @@
             --bg-color: #121212;
             --card-color: #1E1E1E;
             --text-color: #E0E0E0;
-            --accent-color: #4CAF50; /* Изменён на зелёный */
-            --success-color: #8BC34A; /* Светло-зелёный */
+            --accent-color: #4CAF50;
+            --success-color: #8BC34A;
             --current-day-color: #2C2C2E;
             --border-color: #3A3A3C;
-            --warning-color: #FF9800; /* Оранжевый */
+            --warning-color: #FF9800;
             --future-checked-color: #5E5CE6;
-            --reset-color: #F44336; /* Красный для кнопки сброса */
-            --header-color: #1976D2; /* Синий для заголовков */
+            --reset-color: #F44336;
+            --header-color: #1976D2;
+            --quote-color: #FFC107;
         }
         
         body {
@@ -25,8 +26,9 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 15px;
+            padding: 10px;
             line-height: 1.6;
+            font-size: 14px;
         }
         
         .container {
@@ -36,58 +38,61 @@
         
         .card {
             background-color: var(--card-color);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
             border: 1px solid var(--border-color);
         }
         
         h1, h2 {
-            color: var(--header-color); /* Цвет заголовков */
+            color: var(--header-color);
             text-align: center;
             margin-top: 5px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
         }
         
         .quote {
-            font-size: 20px;
+            font-size: 1.1rem;
             text-align: center;
             margin: 15px 0;
             font-weight: 500;
-            min-height: 100px;
+            min-height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 12px;
             background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
             border-radius: 8px;
-            border-left: 4px solid var(--accent-color);
+            border-left: 4px solid var(--quote-color);
+            color: var(--quote-color);
+            font-style: italic;
         }
         
         .progress-info {
-            font-size: 18px;
+            font-size: 1rem;
             text-align: center;
             margin: 8px 0;
         }
         
         .big-number {
-            font-size: 24px;
+            font-size: 1.2rem;
             font-weight: 600;
             text-align: center;
-            margin: 10px 0;
+            margin: 8px 0;
             color: var(--accent-color);
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 14px;
+            margin: 8px 0;
+            font-size: 0.9rem;
         }
         
         th, td {
-            padding: 10px;
+            padding: 8px 5px;
             text-align: center;
             border: 1px solid var(--border-color);
         }
@@ -95,19 +100,20 @@
         th {
             background-color: #2a2a2a;
             font-weight: 500;
-            position: sticky;
-            top: 0;
             color: var(--accent-color);
+            font-size: 0.85rem;
         }
         
-        input, select {
+        .form-control {
             background-color: #1a1a1a;
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 8px;
-            margin: 4px 0;
+            margin: 3px 0;
             width: 100%;
+            font-size: 0.9rem;
+            box-sizing: border-box;
         }
         
         .current-day {
@@ -120,10 +126,10 @@
         }
         
         .checkbox {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border: 2px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 5px;
             display: inline-block;
             cursor: pointer;
             margin: 0 auto;
@@ -142,7 +148,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 14px;
+            font-size: 12px;
         }
         
         .checkbox.future-checked {
@@ -158,27 +164,61 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 14px;
+            font-size: 12px;
         }
         
         .flex-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 8px;
+            justify-content: center;
         }
         
         .flex-item {
-            flex: 1 1 calc(50% - 10px);
-            min-width: 150px;
+            flex: 1 1 calc(50% - 8px);
+            min-width: 120px;
+            max-width: 280px;
+        }
+        
+        .flex-item-small {
+            flex: 0 1 30%;
+            max-width: 120px;
+        }
+        
+        .flex-item-large {
+            flex: 1 1 65%;
+            max-width: 180px;
         }
         
         .scroll-container {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin: 15px 0;
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+        
+        /* Фиксированные заголовки для таблицы прогресса */
+        .progress-table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+        
+        .progress-table-container table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .progress-table-container thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #2a2a2a;
         }
         
         #progressTableBody tr {
@@ -192,13 +232,13 @@
         
         .left-align {
             text-align: left;
-            padding-left: 15px;
+            padding-left: 10px;
         }
         
         .comparison {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
             background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
             border: 1px solid var(--border-color);
         }
@@ -215,14 +255,18 @@
             background-color: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-size: 16px;
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 0.95rem;
             cursor: pointer;
-            margin: 10px 0;
+            margin: 8px 0;
             width: 100%;
             transition: background-color 0.3s;
             font-weight: 600;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
         }
         
         .btn:hover {
@@ -240,7 +284,7 @@
         .progress-number {
             font-weight: bold;
             color: var(--accent-color);
-            font-size: 20px;
+            font-size: 1rem;
         }
         
         /* Стили для адаптивной таблицы */
@@ -249,18 +293,30 @@
         }
         
         .table-responsive table {
-            min-width: 600px;
+            min-width: 100%;
+            width: auto;
         }
         
-        /* Цвета для статусов */
-        .status-completed {
-            color: var(--success-color);
-            font-weight: bold;
+        /* Компактная таблица сложного процента */
+        .compact-table {
+            width: 100%;
+            font-size: 0.85rem;
         }
         
-        .status-pending {
-            color: var(--warning-color);
-            font-weight: bold;
+        .compact-table th,
+        .compact-table td {
+            padding: 6px 4px;
+        }
+        
+        .compact-table tr:nth-child(even) {
+            background-color: #252525;
+        }
+        
+        /* Центрирование контента */
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
@@ -275,7 +331,6 @@
         
         <!-- Block 2: Daily Progress -->
         <div class="card">
-            <h1>Прогресс</h1>
             <div class="progress-info">Баланс: <span id="currentBalance" class="big-number">$0.00</span></div>
             <div class="progress-info" id="todayPlan">
                 Сегодняшний план: $0.00
@@ -289,28 +344,28 @@
         <div class="card">
             <h1>Таблица распределения баланса</h1>
             <div class="flex-container">
-                <div class="flex-item">
-                    <label for="steps">Количество ступеней:</label>
-                    <select id="steps">
+                <div class="flex-item flex-item-small">
+                    <label for="steps">Ступени:</label>
+                    <select id="steps" class="form-control">
                         <option value="6">6</option>
                         <option value="7">7</option>
                         <option value="8">8</option>
                     </select>
                 </div>
-                <div class="flex-item">
+                <div class="flex-item flex-item-large">
                     <label for="startBalance">Стартовый баланс ($):</label>
-                    <input type="number" id="startBalance" step="0.01" min="0" value="100">
+                    <input type="number" id="startBalance" class="form-control" step="0.01" min="0" value="100">
                 </div>
             </div>
             
             <div class="flex-container">
                 <div class="flex-item">
-                    <label for="firstTradePercent">% на первую сделку:</label>
-                    <input type="number" id="firstTradePercent" step="0.01" min="0" value="1">
+                    <label for="firstTradePercent">% на 1 сделку:</label>
+                    <input type="number" id="firstTradePercent" class="form-control" step="0.01" min="0" value="1">
                 </div>
                 <div class="flex-item">
                     <label for="martingaleCoefficient">Коэф. Мартингейла:</label>
-                    <input type="number" id="martingaleCoefficient" step="0.01" min="1" value="2.2">
+                    <input type="number" id="martingaleCoefficient" class="form-control" step="0.01" min="1" value="2.2">
                 </div>
             </div>
             
@@ -318,9 +373,9 @@
                 <table id="stepsTable">
                     <thead>
                         <tr>
-                            <th>Ступень</th>
-                            <th>Сумма сделки ($)</th>
-                            <th>Чистая прибыль ($)</th>
+                            <th>#</th>
+                            <th>Сумма</th>
+                            <th>Прибыль</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -335,46 +390,27 @@
             <h1>Сложный процент</h1>
             <div class="flex-container">
                 <div class="flex-item">
-                    <label for="initialDeposit">Стартовый депозит ($):</label>
-                    <input type="number" id="initialDeposit" step="0.01" min="0" value="1000">
+                    <label for="initialDeposit">Депозит ($):</label>
+                    <input type="number" id="initialDeposit" class="form-control" step="0.01" min="0" value="1000">
                 </div>
                 <div class="flex-item">
-                    <label for="dailyGrowth">% прироста в день:</label>
-                    <input type="number" id="dailyGrowth" step="0.01" min="0" value="1.5">
+                    <label for="dailyGrowth">% прироста:</label>
+                    <input type="number" id="dailyGrowth" class="form-control" step="0.01" min="0" value="1.5">
                 </div>
             </div>
             
-            <div class="flex-container" style="margin-top: 15px;">
-                <div class="flex-item left-align">
-                    <div>Баланс на 30-й день:</div>
-                    <div id="day30" class="progress-info">$0</div>
-                </div>
-                <div class="flex-item left-align">
-                    <div>Баланс на 60-й день:</div>
-                    <div id="day60" class="progress-info">$0</div>
-                </div>
-            </div>
-            
-            <div class="flex-container">
-                <div class="flex-item left-align">
-                    <div>Баланс на 100-й день:</div>
-                    <div id="day100" class="progress-info">$0</div>
-                </div>
-                <div class="flex-item left-align">
-                    <div>Баланс на 200-й день:</div>
-                    <div id="day200" class="progress-info">$0</div>
-                </div>
-            </div>
-            
-            <div class="flex-container">
-                <div class="flex-item left-align">
-                    <div>Баланс на 300-й день:</div>
-                    <div id="day300" class="progress-info">$0</div>
-                </div>
-                <div class="flex-item left-align">
-                    <div>Баланс на 365-й день:</div>
-                    <div id="day365" class="progress-info">$0</div>
-                </div>
+            <div class="scroll-container">
+                <table class="compact-table">
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>Баланс ($)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compoundTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
@@ -384,31 +420,30 @@
             <div class="flex-container">
                 <div class="flex-item">
                     <label for="startDate">Дата начала:</label>
-                    <input type="date" id="startDate">
+                    <input type="date" id="startDate" class="form-control">
                 </div>
                 <div class="flex-item">
                     <label for="currentDate">Текущая дата:</label>
-                    <input type="date" id="currentDate">
+                    <input type="date" id="currentDate" class="form-control">
                 </div>
             </div>
             
-            <div class="scroll-container">
-                <div class="table-responsive">
-                    <table id="progressTable">
-                        <thead>
-                            <tr>
-                                <th>День</th>
-                                <th>План ($)</th>
-                                <th>Факт ($)</th>
-                                <th>Прибыль ($)</th>
-                                <th>Статус</th>
-                            </tr>
-                        </thead>
-                        <tbody id="progressTableBody">
-                            <!-- Will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Контейнер с фиксированными заголовками -->
+            <div class="progress-table-container">
+                <table class="compact-table" id="progressTable">
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>План ($)</th>
+                            <th>Факт ($)</th>
+                            <th>Прибыль ($)</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="progressTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
@@ -417,11 +452,11 @@
             <h2>Сравнение с планом</h2>
             <div class="flex-container">
                 <div class="flex-item">
-                    <div>Плановый баланс:</div>
+                    <div>План:</div>
                     <div id="plannedBalance" class="big-number">$0.00</div>
                 </div>
                 <div class="flex-item">
-                    <div>Фактический баланс:</div>
+                    <div>Факт:</div>
                     <div id="actualBalance" class="big-number">$0.00</div>
                 </div>
                 <div class="flex-item">
@@ -432,7 +467,7 @@
         </div>
         
         <!-- Reset Button -->
-        <div class="card">
+        <div class="card center-content">
             <button class="btn reset-btn" id="resetProgress">Сброс прогресса</button>
         </div>
     </div>
@@ -543,15 +578,24 @@
         
         // Calculate compound interest projections
         function calculateProjections() {
-            const initialDeposit = parseFloat(document.getElementById('initialDeposit').value);
-            const dailyGrowth = parseFloat(document.getElementById('dailyGrowth').value) / 100;
+            const initialDeposit = parseFloat(document.getElementById('initialDeposit').value) || 1000;
+            const dailyGrowth = parseFloat(document.getElementById('dailyGrowth').value) || 1.5;
+            const growthRate = dailyGrowth / 100;
             
-            document.getElementById('day30').textContent = '$' + (initialDeposit * Math.pow(1 + dailyGrowth, 30)).toFixed(2);
-            document.getElementById('day60').textContent = '$' + (initialDeposit * Math.pow(1 + dailyGrowth, 60)).toFixed(2);
-            document.getElementById('day100').textContent = '$' + (initialDeposit * Math.pow(1 + dailyGrowth, 100)).toFixed(2);
-            document.getElementById('day200').textContent = '$' + (initialDeposit * Math.pow(1 + dailyGrowth, 200)).toFixed(2);
-            document.getElementById('day300').textContent = '$' + (initialDeposit * Math.pow(1 + dailyGrowth, 300)).toFixed(2);
-            document.getElementById('day365').textContent = '$' + (initialDeposit * Math.pow(1 + dailyGrowth, 365)).toFixed(2);
+            const compoundDays = [30, 60, 100, 200, 300, 365];
+            let tableHTML = '';
+            
+            compoundDays.forEach(day => {
+                const balance = initialDeposit * Math.pow(1 + growthRate, day);
+                tableHTML += `
+                    <tr>
+                        <td>${day}</td>
+                        <td>${balance.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('compoundTableBody').innerHTML = tableHTML;
         }
         
         // Генерация таблицы прогресса с возможностью опережающих отметок
@@ -618,7 +662,7 @@
                 }
                 
                 row.innerHTML = `
-                    <td>День ${day}</td>
+                    <td>${day}</td>
                     <td>${plannedBalance.toFixed(2)}</td>
                     <td>${!isFuture ? actualBalance.toFixed(2) : '-'}</td>
                     <td>${isChecked ? dailyProfit.toFixed(2) : '-'}</td>
@@ -724,7 +768,7 @@
                 }
                 
                 row.innerHTML = `
-                    <td>День ${dayData.day}</td>
+                    <td>${dayData.day}</td>
                     <td>${dayData.plannedBalance.toFixed(2)}</td>
                     <td>${!dayData.isFuture ? dayData.actualBalance.toFixed(2) : '-'}</td>
                     <td>${dayData.isChecked ? dayData.dailyProfit.toFixed(2) : '-'}</td>
@@ -832,7 +876,7 @@
 
         // Scroll to current day in progress table
         function scrollToCurrentDay() {
-            const container = document.getElementById('progressScrollContainer');
+            const container = document.querySelector('.progress-table-container');
             const currentDayRow = document.querySelector('.current-day');
             
             if (container && currentDayRow) {
