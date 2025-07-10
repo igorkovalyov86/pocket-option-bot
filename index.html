@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketOptionKovalev1bot</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-color: #1E1E1E;
+            --text-color: #E0E0E0;
+            --accent-color: #4CAF50;
+            --success-color: #8BC34A;
+            --current-day-color: #2C2C2E;
+            --border-color: #3A3A3C;
+            --warning-color: #FF9800;
+            --future-checked-color: #5E5CE6;
+            --reset-color: #F44336;
+            --header-color: #1976D2;
+            --quote-color: #FFC107;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 10px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+        
+        h1, h2 {
+            color: var(--header-color);
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+        }
+        
+        .quote {
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 15px 0;
+            font-weight: 500;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            border-radius: 8px;
+            border-left: 4px solid var(--quote-color);
+            color: var(--quote-color);
+            font-style: italic;
+        }
+        
+        .progress-info {
+            font-size: 1rem;
+            text-align: center;
+            margin: 8px 0;
+        }
+        
+        .big-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 8px 0;
+            color: var(--accent-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            padding: 8px 5px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: #2a2a2a;
+            font-weight: 500;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+        }
+        
+        .form-control {
+            background-color: #1a1a1a;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            margin: 3px 0;
+            width: 100%;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+        
+        .current-day {
+            background-color: var(--current-day-color);
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .completed {
+            color: var(--success-color);
+        }
+        
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            display: inline-block;
+            cursor: pointer;
+            margin: 0 auto;
+        }
+        
+        .checkbox.checked {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            position: relative;
+        }
+        
+        .checkbox.checked::after {
+            content: "✓";
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+        }
+        
+        .checkbox.future-checked {
+            background-color: var(--future-checked-color);
+            border-color: var(--future-checked-color);
+            position: relative;
+        }
+        
+        .checkbox.future-checked::after {
+            content: "✓";
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+        }
+        
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+            justify-content: center;
+        }
+        
+        .flex-item {
+            flex: 1 1 calc(50% - 8px);
+            min-width: 120px;
+            max-width: 280px;
+        }
+        
+        .flex-item-small {
+            flex: 0 1 30%;
+            max-width: 120px;
+        }
+        
+        .flex-item-large {
+            flex: 1 1 65%;
+            max-width: 180px;
+        }
+        
+        .scroll-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+        
+        /* Фиксированные заголовки для таблицы прогресса */
+        .progress-table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+        
+        .progress-table-container table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .progress-table-container thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #2a2a2a;
+        }
+        
+        #progressTableBody tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        #progressTableBody tr:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .left-align {
+            text-align: left;
+            padding-left: 10px;
+        }
+        
+        .comparison {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            border: 1px solid var(--border-color);
+        }
+        
+        .warning {
+            color: var(--warning-color);
+        }
+        
+        .success {
+            color: var(--success-color);
+        }
+        
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin: 8px 0;
+            width: 100%;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        
+        .btn:hover {
+            background-color: #3d8b40;
+        }
+        
+        .reset-btn {
+            background-color: var(--reset-color);
+        }
+        
+        .reset-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .progress-number {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1rem;
+        }
+        
+        /* Стили для адаптивной таблицы */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .table-responsive table {
+            min-width: 100%;
+            width: auto;
+        }
+        
+        /* Компактная таблица сложного процента */
+        .compact-table {
+            width: 100%;
+            font-size: 0.85rem;
+        }
+        
+        .compact-table th,
+        .compact-table td {
+            padding: 6px 4px;
+        }
+        
+        .compact-table tr:nth-child(even) {
+            background-color: #252525;
+        }
+        
+        /* Центрирование контента */
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Block 1: Motivational Quote -->
+        <div class="card">
+            <div class="quote" id="dailyQuote">
+                Загрузка цитаты...
+            </div>
+        </div>
+        
+        <!-- Block 2: Daily Progress -->
+        <div class="card">
+            <div class="progress-info">Баланс: <span id="currentBalance" class="big-number">$0.00</span></div>
+            <div class="progress-info" id="todayPlan">
+                Сегодняшний план: $0.00
+            </div>
+            <div class="progress-info">
+                Закрыто дней: <span id="completedDays" class="progress-number">0</span> | Осталось дней: <span id="remainingDays" class="progress-number">365</span>
+            </div>
+        </div>
+        
+        <!-- Block 3: Balance Distribution Table -->
+        <div class="card">
+            <h1>Таблица распределения баланса</h1>
+            <div class="flex-container">
+                <div class="flex-item flex-item-small">
+                    <label for="steps">Ступени:</label>
+                    <select id="steps" class="form-control">
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                </div>
+                <div class="flex-item flex-item-large">
+                    <label for="startBalance">Стартовый баланс ($):</label>
+                    <input type="number" id="startBalance" class="form-control" step="0.01" min="0" value="100">
+                </div>
+            </div>
+            
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label for="firstTradePercent">% на 1 сделку:</label>
+                    <input type="number" id="firstTradePercent" class="form-control" step="0.01" min="0" value="1">
+                </div>
+                <div class="flex-item">
+                    <label for="martingaleCoefficient">Коэф. Мартингейла:</label>
+                    <input type="number" id="martingaleCoefficient" class="form-control" step="0.01" min="1" value="2.2">
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="stepsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Сумма</th>
+                            <th>Прибыль</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Results will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Block 4: Compound Interest -->
+        <div class="card">
+            <h1>Сложный процент</h1>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label for="initialDeposit">Депозит ($):</label>
+                    <input type="number" id="initialDeposit" class="form-control" step="0.01" min="0" value="1000">
+                </div>
+                <div class="flex-item">
+                    <label for="dailyGrowth">% прироста:</label>
+                    <input type="number" id="dailyGrowth" class="form-control" step="0.01" min="0" value="1.5">
+                </div>
+            </div>
+            
+            <div class="scroll-container">
+                <table class="compact-table">
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>Баланс ($)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compoundTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Block 5: 365-Day Progress -->
+        <div class="card">
+            <h1>Прогресс по дням</h1>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label for="startDate">Дата начала:</label>
+                    <input type="date" id="startDate" class="form-control">
+                </div>
+                <div class="flex-item">
+                    <label for="currentDate">Текущая дата:</label>
+                    <input type="date" id="currentDate" class="form-control">
+                </div>
+            </div>
+            
+            <!-- Контейнер с фиксированными заголовками -->
+            <div class="progress-table-container">
+                <table class="compact-table" id="progressTable">
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>План ($)</th>
+                            <th>Факт ($)</th>
+                            <th>Прибыль ($)</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="progressTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Comparison Block -->
+        <div class="card comparison">
+            <h2>Сравнение с планом</h2>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <div>План:</div>
+                    <div id="plannedBalance" class="big-number">$0.00</div>
+                </div>
+                <div class="flex-item">
+                    <div>Факт:</div>
+                    <div id="actualBalance" class="big-number">$0.00</div>
+                </div>
+                <div class="flex-item">
+                    <div>Отклонение:</div>
+                    <div id="deviation" class="big-number">$0.00</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reset Button -->
+        <div class="card center-content">
+            <button class="btn reset-btn" id="resetProgress">Сброс прогресса</button>
+        </div>
+    </div>
+
+    <script>
+        // Telegram Bot API с вашими данными
+        const BOT_TOKEN = '8183400724:AAEpEQfGwD0gWoOGIz-YS7FzoXwWVWynRVo';
+        const BOT_NAME = 'PocketOptionKovalev1bot';
+        let botActive = false;
+        
+        // Motivational quotes
+        const quotes = [
+            "Успех — это способность идти от неудачи к неудаче, не теряя энтузиазма. — Уинстон Черчилль",
+            "Единственный способ сделать выдающуюся работу — любить то, что ты делаешь. — Стив Джобс",
+            "Ваше время ограничено, не тратьте его, живя чужой жизнью. — Стив Джобс",
+            "Не бойтесь отказываться от хорошего в пользу великого. — Джим Коллинз",
+            "Сложнее всего начать действовать, все остальное зависит только от упорства. — Амелия Эрхарт",
+            "Лучший способ предсказать будущее — создать его. — Питер Друкер",
+            "Успех — это не окончательная точка, неудача — не фатальная ошибка: значение имеет мужество продолжать. — Уинстон Черчилль",
+            "Я не потерпел неудачу. Я просто нашел 10 000 способов, которые не работают. — Томас Эдисон",
+            "Если вы думаете, что можете что-то сделать или думаете, что не можете — в обоих случаях вы правы. — Генри Форд",
+            "Единственное место, где успех приходит до работы — это словарь. — Видал Сассун",
+            "Не ждите. Время никогда не будет подходящим. — Наполеон Хилл",
+            "Инвестиции в знания дают наибольшую прибыль. — Бенджамин Франклин",
+            "Дисциплина — это мост между целями и достижениями. — Джим Рон",
+            "Богатство — это не сколько денег вы зарабатываете, а сколько сохраняете. — Роберт Кийосаки",
+            "Рискуйте! Если вы побеждаете, вы будете счастливы, если проиграете — станете мудрее. — Сванте Август",
+            "Либо вы управляете своими финансами, либо их отсутствие будет управлять вами. — Дэйв Рэмси",
+            "Деньги — это только инструмент. Они доставят вас куда угодно, но не заменят вас в качестве водителя. — Айн Рэнд",
+            "Будьте осторожны с мелкими расходами: маленькая течь потопит большой корабль. — Бенджамин Франклин",
+            "Фортуна улыбается смелым. — Вергилий",
+            "Секрет успеха в том, чтобы начать. — Марк Твен",
+            "Не говорите, что у вас нет времени. У вас ровно столько же времени, сколько было у Микеланджело, Пастера, Матери Терезы, Леонардо да Винчи, Томаса Джефферсона и Альберта Эйнштейна. — Джексон Браун мл.",
+            "Если вы не планируете, вы планируете потерпеть неудачу. — Бенджамин Франклин",
+            "Будущее принадлежит тем, кто верит в красоту своей мечты. — Элеонора Рузвельт",
+            "Сначала они вас не замечают, потом смеются над вами, затем борются с вами, а потом вы побеждаете. — Махатма Ганди",
+            "Единственный предел нашим завтрашним свершениям — это наши сегодняшние сомнения. — Франклин Рузвельт",
+            "Успех — это сумма небольших усилий, повторяемых изо дня в день. — Роберт Колльер",
+            "Не бойтесь совершенства. Вам его никогда не достичь. — Сальвадор Дали",
+            "Лучшая месть — огромный успех. — Фрэнк Синатра",
+            "Ваши убеждения становятся вашими мыслями, ваши мысли становятся вашими словами, ваши слова становятся вашими действиями, ваши действия становятся вашими привычками, ваши привычки становятся вашими ценностями, ваши ценностями становятся вашей судьбой. — Махатма Ганди",
+            "Я не продукт своих обстоятельств. Я продукт своих решений. — Стивен Кови"
+        ];
+        
+        // Глобальные переменные для хранения данных
+        let daysData = [];
+        let initialDepositValue = 1000;
+        let dailyGrowthValue = 0.015;
+        let savedProgress = {};
+        
+        // Загрузка сохраненных данных
+        function loadSavedData() {
+            try {
+                const savedData = localStorage.getItem('progressData');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    savedProgress = parsedData.progress || {};
+                    initialDepositValue = parsedData.initialDeposit || 1000;
+                    dailyGrowthValue = parsedData.dailyGrowth || 0.015;
+                    document.getElementById('initialDeposit').value = initialDepositValue;
+                    document.getElementById('dailyGrowth').value = (dailyGrowthValue * 100).toFixed(1);
+                }
+            } catch (e) {
+                console.error("Ошибка загрузки данных:", e);
+            }
+        }
+        
+        // Сохранение данных
+        function saveProgressData() {
+            const dataToSave = {
+                progress: savedProgress,
+                initialDeposit: initialDepositValue,
+                dailyGrowth: dailyGrowthValue
+            };
+            localStorage.setItem('progressData', JSON.stringify(dataToSave));
+        }
+        
+        // Display a random quote (one per day)
+        function displayDailyQuote() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            const quoteIndex = dayOfYear % quotes.length;
+            document.getElementById('dailyQuote').textContent = quotes[quoteIndex];
+        }
+        
+        // Calculate steps table
+        function calculateSteps() {
+            const steps = parseInt(document.getElementById('steps').value);
+            const startBalance = parseFloat(document.getElementById('startBalance').value);
+            const firstTradePercent = parseFloat(document.getElementById('firstTradePercent').value) / 100;
+            const martingaleCoefficient = parseFloat(document.getElementById('martingaleCoefficient').value);
+            
+            let tableHTML = '';
+            let totalPreviousTrades = 0;
+            let currentTrade = startBalance * firstTradePercent;
+            
+            for (let i = 1; i <= steps; i++) {
+                const netProfit = (currentTrade * 0.92) - totalPreviousTrades;
+                totalPreviousTrades += currentTrade;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${i}</td>
+                        <td>${currentTrade.toFixed(2)}</td>
+                        <td>${netProfit.toFixed(2)}</td>
+                    </tr>
+                `;
+                
+                currentTrade *= martingaleCoefficient;
+            }
+            
+            document.querySelector('#stepsTable tbody').innerHTML = tableHTML;
+        }
+        
+        // Calculate compound interest projections
+        function calculateProjections() {
+            const initialDeposit = parseFloat(document.getElementById('initialDeposit').value) || 1000;
+            const dailyGrowth = parseFloat(document.getElementById('dailyGrowth').value) || 1.5;
+            const growthRate = dailyGrowth / 100;
+            
+            const compoundDays = [30, 60, 100, 200, 300, 365];
+            let tableHTML = '';
+            
+            compoundDays.forEach(day => {
+                const balance = initialDeposit * Math.pow(1 + growthRate, day);
+                tableHTML += `
+                    <tr>
+                        <td>${day}</td>
+                        <td>${balance.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('compoundTableBody').innerHTML = tableHTML;
+        }
+        
+        // Генерация таблицы прогресса с возможностью опережающих отметок
+        function generateProgressTable() {
+            const startDateInput = document.getElementById('startDate').value;
+            const currentDateInput = document.getElementById('currentDate').value;
+            
+            if (!startDateInput || !currentDateInput) return;
+            
+            const startDate = new Date(startDateInput);
+            const currentDate = new Date(currentDateInput);
+            currentDate.setHours(0, 0, 0, 0);
+            
+            initialDepositValue = parseFloat(document.getElementById('initialDeposit').value) || 1000;
+            dailyGrowthValue = (parseFloat(document.getElementById('dailyGrowth').value) || 1.5) / 100;
+            const tableBody = document.getElementById('progressTableBody');
+            
+            tableBody.innerHTML = '';
+            let actualBalance = initialDepositValue;
+            daysData = [];
+            
+            for (let day = 1; day <= 365; day++) {
+                const currentDayDate = new Date(startDate);
+                currentDayDate.setDate(startDate.getDate() + day - 1);
+                const dateKey = currentDayDate.toISOString().split('T')[0];
+                
+                const isPast = currentDayDate < currentDate;
+                const isToday = currentDayDate.toDateString() === currentDate.toDateString();
+                const isFuture = !isPast && !isToday;
+                
+                // Проверяем, есть ли сохраненные отметки для этого дня
+                const isChecked = savedProgress[dateKey] === true;
+                
+                // Рассчитываем плановый баланс
+                const plannedBalance = initialDepositValue * Math.pow(1 + dailyGrowthValue, day - 1);
+                const dailyPlan = plannedBalance * dailyGrowthValue;
+                
+                // Рассчитываем фактический баланс
+                let dailyProfit = 0;
+                if (isChecked) {
+                    dailyProfit = actualBalance * dailyGrowthValue;
+                    actualBalance += dailyProfit;
+                }
+                
+                // Сохраняем данные дня
+                const dayData = {
+                    day,
+                    dateKey,
+                    plannedBalance,
+                    actualBalance: actualBalance,
+                    dailyProfit: dailyProfit,
+                    isChecked,
+                    isPast,
+                    isToday,
+                    isFuture
+                };
+                
+                daysData.push(dayData);
+                
+                // Создаем строку таблицы
+                const row = document.createElement('tr');
+                if (isToday) {
+                    row.classList.add('current-day');
+                    document.getElementById('currentBalance').textContent = '$' + actualBalance.toFixed(2);
+                    document.getElementById('todayPlan').textContent = `Сегодняшний план: $${(plannedBalance * dailyGrowthValue).toFixed(2)}`;
+                }
+                
+                row.innerHTML = `
+                    <td>${day}</td>
+                    <td>${plannedBalance.toFixed(2)}</td>
+                    <td>${!isFuture ? actualBalance.toFixed(2) : '-'}</td>
+                    <td>${isChecked ? dailyProfit.toFixed(2) : '-'}</td>
+                    <td>
+                        <div class="checkbox ${isChecked ? (isFuture ? 'future-checked' : 'checked') : ''}" 
+                             data-day="${day}" data-date="${dateKey}"></div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            }
+            
+            // Добавляем обработчики событий для галочек
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.addEventListener('click', function() {
+                    const day = parseInt(this.getAttribute('data-day'));
+                    const dateKey = this.getAttribute('data-date');
+                    const dayData = daysData.find(d => d.day === day);
+                    const isFutureDay = dayData?.isFuture;
+                    
+                    // Переключаем состояние
+                    const isChecked = this.classList.contains('checked') || 
+                                     this.classList.contains('future-checked');
+                    
+                    if (isChecked) {
+                        this.classList.remove('checked', 'future-checked');
+                        delete savedProgress[dateKey];
+                    } else {
+                        if (isFutureDay) {
+                            this.classList.add('future-checked');
+                        } else {
+                            this.classList.add('checked');
+                        }
+                        savedProgress[dateKey] = true;
+                    }
+                    
+                    // Обновляем данные дня
+                    if (dayData) {
+                        dayData.isChecked = !isChecked;
+                        
+                        // Пересчитываем балансы для последующих дней
+                        recalculateBalances(day);
+                    }
+                    
+                    updateCompletedDays();
+                    updateComparison();
+                    saveProgressData();
+                });
+            });
+            
+            updateCompletedDays();
+            updateComparison();
+            scrollToCurrentDay();
+        }
+
+        // Пересчитывает балансы начиная с указанного дня
+        function recalculateBalances(startFromDay) {
+            let actualBalance = initialDepositValue;
+            
+            // Находим актуальный баланс перед началом пересчета
+            if (startFromDay > 1) {
+                const prevDayData = daysData.find(d => d.day === startFromDay - 1);
+                if (prevDayData) {
+                    actualBalance = prevDayData.actualBalance;
+                }
+            }
+            
+            // Пересчитываем балансы для дней, начиная с указанного
+            for (let i = startFromDay - 1; i < daysData.length; i++) {
+                const dayData = daysData[i];
+                
+                if (savedProgress[dayData.dateKey]) {
+                    dayData.dailyProfit = actualBalance * dailyGrowthValue;
+                    actualBalance += dayData.dailyProfit;
+                    dayData.actualBalance = actualBalance;
+                } else {
+                    dayData.dailyProfit = 0;
+                    dayData.actualBalance = actualBalance;
+                }
+            }
+            
+            // Обновляем таблицу
+            updateProgressTable();
+        }
+
+        // Обновляет таблицу прогресса на основе daysData
+        function updateProgressTable() {
+            const tableBody = document.getElementById('progressTableBody');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            daysData.forEach(dayData => {
+                const row = document.createElement('tr');
+                if (dayData.isToday) {
+                    row.classList.add('current-day');
+                    document.getElementById('currentBalance').textContent = '$' + dayData.actualBalance.toFixed(2);
+                    document.getElementById('todayPlan').textContent = `Сегодняшний план: $${(dayData.plannedBalance * dailyGrowthValue).toFixed(2)}`;
+                }
+                
+                row.innerHTML = `
+                    <td>${dayData.day}</td>
+                    <td>${dayData.plannedBalance.toFixed(2)}</td>
+                    <td>${!dayData.isFuture ? dayData.actualBalance.toFixed(2) : '-'}</td>
+                    <td>${dayData.isChecked ? dayData.dailyProfit.toFixed(2) : '-'}</td>
+                    <td>
+                        <div class="checkbox ${dayData.isChecked ? (dayData.isFuture ? 'future-checked' : 'checked') : ''}" 
+                             data-day="${dayData.day}" data-date="${dayData.dateKey}"></div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Добавляем обработчики событий для галочек
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.addEventListener('click', function() {
+                    const day = parseInt(this.getAttribute('data-day'));
+                    const dateKey = this.getAttribute('data-date');
+                    const dayData = daysData.find(d => d.day === day);
+                    const isFutureDay = dayData?.isFuture;
+                    
+                    // Переключаем состояние
+                    const isChecked = this.classList.contains('checked') || 
+                                     this.classList.contains('future-checked');
+                    
+                    if (isChecked) {
+                        this.classList.remove('checked', 'future-checked');
+                        delete savedProgress[dateKey];
+                    } else {
+                        if (isFutureDay) {
+                            this.classList.add('future-checked');
+                        } else {
+                            this.classList.add('checked');
+                        }
+                        savedProgress[dateKey] = true;
+                    }
+                    
+                    // Обновляем данные дня
+                    if (dayData) {
+                        dayData.isChecked = !isChecked;
+                        
+                        // Пересчитываем балансы для последующих дней
+                        recalculateBalances(day);
+                    }
+                    
+                    updateCompletedDays();
+                    updateComparison();
+                    saveProgressData();
+                });
+            });
+            
+            updateCompletedDays();
+            updateComparison();
+        }
+
+        // Обновляет количество завершенных дней
+        function updateCompletedDays() {
+            const checkedBoxes = Object.keys(savedProgress).length;
+            document.getElementById('completedDays').textContent = checkedBoxes;
+            document.getElementById('remainingDays').textContent = 365 - checkedBoxes;
+        }
+
+        // Обновляет блок сравнения
+        function updateComparison() {
+            const startDateInput = document.getElementById('startDate').value;
+            const currentDateInput = document.getElementById('currentDate').value;
+            
+            if (!startDateInput || !currentDateInput) return;
+            
+            const startDate = new Date(startDateInput);
+            const currentDate = new Date(currentDateInput);
+            const diffTime = Math.abs(currentDate - startDate);
+            const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 включая стартовый день
+            
+            // Рассчитываем плановый баланс на сегодня
+            const plannedBalanceToday = initialDepositValue * Math.pow(1 + dailyGrowthValue, daysPassed - 1);
+            
+            // Рассчитываем фактический баланс на основе завершенных дней
+            let actualBalanceToday = initialDepositValue;
+            const completedDaysCount = Object.keys(savedProgress).length;
+            
+            if (completedDaysCount > 0) {
+                actualBalanceToday = initialDepositValue * Math.pow(1 + dailyGrowthValue, completedDaysCount);
+            }
+            
+            // Рассчитываем отклонение
+            const deviation = actualBalanceToday - plannedBalanceToday;
+            
+            // Обновляем DOM
+            document.getElementById('plannedBalance').textContent = '$' + plannedBalanceToday.toFixed(2);
+            document.getElementById('actualBalance').textContent = '$' + actualBalanceToday.toFixed(2);
+            
+            if (deviation >= 0) {
+                document.getElementById('deviation').className = 'big-number success';
+                document.getElementById('deviation').textContent = '+$' + Math.abs(deviation).toFixed(2);
+            } else {
+                document.getElementById('deviation').className = 'big-number warning';
+                document.getElementById('deviation').textContent = '-$' + Math.abs(deviation).toFixed(2);
+            }
+        }
+
+        // Scroll to current day in progress table
+        function scrollToCurrentDay() {
+            const container = document.querySelector('.progress-table-container');
+            const currentDayRow = document.querySelector('.current-day');
+            
+            if (container && currentDayRow) {
+                const scrollPosition = currentDayRow.offsetTop - container.offsetHeight / 2 + currentDayRow.offsetHeight / 2;
+                container.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+            }
+        }
+        
+        // Функция сброса прогресса
+        function resetProgress() {
+            if (confirm("Вы уверены, что хотите сбросить весь прогресс? Это действие нельзя отменить.")) {
+                savedProgress = {};
+                localStorage.removeItem('progressData');
+                generateProgressTable();
+                updateComparison();
+                
+                // Сброс дат
+                const today = new Date();
+                const formattedToday = today.toISOString().split('T')[0];
+                document.getElementById('startDate').value = formattedToday;
+                document.getElementById('currentDate').value = formattedToday;
+                
+                alert("Прогресс успешно сброшен!");
+            }
+        }
+        
+        // Initialize the page
+        window.onload = function() {
+            // Загрузка сохраненных данных
+            loadSavedData();
+            
+            // Set default dates to today
+            const today = new Date();
+            const formattedToday = today.toISOString().split('T')[0];
+            document.getElementById('startDate').value = formattedToday;
+            document.getElementById('currentDate').value = formattedToday;
+            
+            // Initialize all components
+            displayDailyQuote();
+            calculateSteps();
+            calculateProjections();
+            generateProgressTable();
+            updateComparison();
+            
+            // Set up event listeners for automatic calculations
+            document.getElementById('steps').addEventListener('change', calculateSteps);
+            document.getElementById('startBalance').addEventListener('input', calculateSteps);
+            document.getElementById('firstTradePercent').addEventListener('input', calculateSteps);
+            document.getElementById('martingaleCoefficient').addEventListener('input', calculateSteps);
+            
+            // Исправленные обработчики для сложного процента
+            document.getElementById('initialDeposit').addEventListener('input', function() {
+                initialDepositValue = parseFloat(this.value) || 1000;
+                calculateProjections();
+                generateProgressTable();
+                updateComparison();
+                saveProgressData();
+            });
+            
+            document.getElementById('dailyGrowth').addEventListener('input', function() {
+                dailyGrowthValue = (parseFloat(this.value) || 1.5) / 100;
+                calculateProjections();
+                generateProgressTable();
+                updateComparison();
+                saveProgressData();
+            });
+            
+            document.getElementById('startDate').addEventListener('change', function() {
+                generateProgressTable();
+                updateComparison();
+                saveProgressData();
+            });
+            
+            document.getElementById('currentDate').addEventListener('change', function() {
+                generateProgressTable();
+                updateComparison();
+                saveProgressData();
+            });
+            
+            // Кнопка сброса прогресса
+            document.getElementById('resetProgress').addEventListener('click', resetProgress);
+        };
+    </script>
+</body>
+</html>
