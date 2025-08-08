@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Торговый Трекер</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ====== NEW DESIGN: Glassmorphism + clean UI ====== */
+        :root{
+            --bg-1: #0f1724;
+            --bg-2: #0b1220;
+            --card-glass: rgba(255,255,255,0.04);
+            --card-border: rgba(255,255,255,0.06);
+            --accent-1: #6a11cb;
+            --accent-2: #2575fc;
+            --accent-3: #5ee7df;
+            --success: #00cdac;
+            --danger: #ff6b6b;
+            --radius: 16px;
+            --soft-radius: 12px;
+            --shadow-1: 0 10px 30px rgba(2,6,23,0.6);
+            --glass-blur: 10px;
+            --muted: rgba(255,255,255,0.65);
+            --muted-2: rgba(255,255,255,0.45);
+            --transition: 0.28s cubic-bezier(.2,.9,.2,1);
+        }
+
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%}
+        body{
+            font-family:'Roboto',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+            background: radial-gradient(1200px 600px at 10% 10%, rgba(107,58,255,0.12), transparent 8%),
+                        radial-gradient(900px 420px at 95% 95%, rgba(94,231,223,0.06), transparent 6%),
+                        linear-gradient(180deg,var(--bg-1),var(--bg-2));
+            color:#fff;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            padding:18px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:12px;
+        }
+
+        /* Container */
+        .container{
+            width:100%;
+            max-width:1200px;
+            display:grid;
+            grid-template-columns: 1fr;
+            gap:18px;
+            padding-bottom:24px;
+        }
+
+        /* Header */
+        header{
+            width:100%;
+            padding:18px;
+            border-radius:var(--radius);
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+            border:1px solid var(--card-border);
+            backdrop-filter: blur(var(--glass-blur));
+            box-shadow: var(--shadow-1);
+            text-align:center;
+            overflow:hidden;
+            position:relative;
+            transition: var(--transition);
+        }
+        header::after{
+            content:'';
+            position:absolute;
+            inset:0;
+            pointer-events:none;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+            mix-blend-mode:overlay;
+        }
+        h1{
+            font-family:'Montserrat',sans-serif;
+            font-size:1.9rem;
+            letter-spacing:1px;
+            margin-bottom:6px;
+            background: linear-gradient(90deg,#ffffff,#dfe9ff);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .subtitle{
+            font-size:0.95rem;
+            color:var(--muted-2);
+            max-width:900px;
+            margin:0 auto;
+            font-weight:400;
+        }
+
+        /* Card base */
+        .card{
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border:1px solid var(--card-border);
+            border-radius:var(--radius);
+            padding:18px;
+            box-shadow: var(--shadow-1);
+            backdrop-filter: blur(var(--glass-blur));
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .card:hover{ transform: translateY(-6px); box-shadow: 0 22px 60px rgba(2,6,23,0.7); }
+
+        .card-title{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            font-family:'Montserrat',sans-serif;
+            font-weight:600;
+            font-size:1.2rem;
+            margin-bottom:12px;
+            color:transparent;
+            background: linear-gradient(90deg,var(--accent-1),var(--accent-3));
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        /* motivational quote */
+        .quote{
+            font-size:1.05rem;
+            font-weight:300;
+            color:var(--muted);
+            padding:18px;
+            border-radius:12px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+            border:1px solid rgba(255,255,255,0.02);
+            position:relative;
+        }
+        .quote .author{ display:block; text-align:right; margin-top:10px; color:var(--muted-2); font-weight:500; font-size:0.95rem; }
+
+        /* Grid for small cards */
+        .grid-container{
+            display:grid;
+            grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+            gap:14px;
+            margin-top:6px;
+        }
+        .data-card{
+            padding:14px;
+            border-radius:12px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.007));
+            border:1px solid rgba(255,255,255,0.02);
+            text-align:center;
+            transition: var(--transition);
+        }
+        .data-card:hover{ transform: translateY(-4px); }
+        .data-title{ color:var(--muted-2); font-size:0.85rem; margin-bottom:8px; }
+        .data-value{ font-size:1.6rem; font-weight:700;
+            background: linear-gradient(90deg,#fff,#e6e6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Controls & inputs */
+        .flex-container{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+        .flex-item{ flex:1 1 200px; min-width:160px; }
+        .form-control{
+            background: rgba(0,0,0,0.25);
+            color: #fff;
+            border:1px solid rgba(255,255,255,0.04);
+            padding:10px 12px;
+            border-radius:10px;
+            width:100%;
+            transition: box-shadow var(--transition), border-color var(--transition);
+            font-size:0.95rem;
+        }
+        .form-control:focus{ outline:none; box-shadow:0 6px 18px rgba(106,17,203,0.12); border-color: rgba(123,104,238,0.7); }
+
+        /* Switch */
+        .switch-row{ display:flex;align-items:center;gap:10px;margin:10px 0;}
+        .switch { position:relative; width:54px; height:28px; display:inline-block; }
+        .switch input{ opacity:0; width:0; height:0; }
+        .slider{ position:absolute; inset:0; border-radius:28px; background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); transition:var(--transition); box-shadow:inset 0 1px 0 rgba(255,255,255,0.03); }
+        .slider:before{ content:''; position:absolute; left:4px; top:4px; width:20px; height:20px; border-radius:50%; background:#fff; transition:var(--transition); }
+        input:checked + .slider{ background: linear-gradient(90deg,#ff9a9e,#fecfef); }
+        input:checked + .slider:before{ transform: translateX(26px); }
+
+        /* tables */
+        .table-container{ overflow:auto; border-radius:12px; margin-top:8px; }
+        table{ width:100%; border-collapse:collapse; font-size:0.95rem; min-width:480px; }
+        th,td{ padding:10px 8px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.03); }
+        thead th{ position:sticky; top:0; background: linear-gradient(90deg, rgba(123,104,238,0.95), rgba(94,231,223,0.06)); color: #fff; z-index:5; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; }
+        tr:nth-child(even){ background: rgba(255,255,255,0.02); }
+        tr:hover{ background: rgba(123,104,238,0.06); }
+
+        /* progress table specifics */
+        .progress-container-365{ max-height:420px; height:420px; overflow-y:auto; border-radius:12px; border:1px solid rgba(255,255,255,0.02); margin-top:12px; }
+        .current-day{ background: linear-gradient(90deg, rgba(123,104,238,0.18), rgba(94,231,223,0.06)) !important; box-shadow: inset 0 0 18px rgba(123,104,238,0.12); position:relative; }
+        .current-day::after{ content:''; position:absolute; left:0; top:0; width:4px; height:100%; background: linear-gradient(180deg,var(--accent-1),var(--accent-3)); border-radius:0 6px 6px 0; }
+
+        /* checkbox */
+        .checkbox{ width:28px; height:28px; display:inline-block; border-radius:50%; position:relative; cursor:pointer; transition: transform var(--transition); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:2px solid rgba(255,255,255,0.07); box-shadow: inset 0 -4px 12px rgba(0,0,0,0.25); }
+        .checkbox:hover{ transform: scale(1.04); }
+
+        /* gradient fill layer */
+        .checkbox::before{ content:""; position:absolute; inset:4px; border-radius:50%; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); transform: scale(0); transform-origin:center; transition: transform 300ms cubic-bezier(.2,.9,.2,1), opacity 220ms; opacity:0; filter: drop-shadow(0 6px 18px rgba(106,17,203,0.18)); }
+
+        /* white inner ring for realism */
+        .checkbox::after{ content:""; position:absolute; inset:2px; border-radius:50%; border:1px solid rgba(255,255,255,0.06); pointer-events:none; }
+
+        /* checkmark */
+        .checkbox .check-icon{ position:absolute; left:50%; top:50%; transform:translate(-50%,-60%) scale(0.85) translateY(6px); width:14px; height:10px; opacity:0; transition: transform 360ms cubic-bezier(.2,.9,.2,1), opacity 220ms; display:block; }
+        .checkbox .check-icon::before, .checkbox .check-icon::after{ content:""; position:absolute; height:2px; background:#fff; border-radius:2px; transform-origin:center; }
+        .checkbox .check-icon::before{ width:10px; left:0; top:6px; transform: rotate(-45deg); }
+        .checkbox .check-icon::after{ width:5px; left:7px; top:6px; transform: rotate(45deg); }
+
+        /* Checked state */
+        .checkbox.checked{ border:none; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008)); }
+        .checkbox.checked::before{ transform: scale(1); opacity:1; }
+        .checkbox.checked .check-icon{ transform:translate(-50%,-50%) scale(1); opacity:1; }
+
+        /* Accessibility: focus outline */
+        .checkbox:focus{ outline: none; box-shadow: 0 0 0 6px rgba(123,104,238,0.12); border-radius:50%; }
+
+        /* small responsive tweaks */
+        .comparison{ display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; }
+        .comparison-item{ flex:1 1 200px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.007)); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.02); }
+
+        .btn{ display:inline-block; padding:12px 16px; border-radius:10px; border:none; background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#fff; font-weight:600; cursor:pointer; transition: var(--transition); }
+        .btn:hover{ transform:translateY(-3px); box-shadow: 0 12px 30px rgba(106,17,203,0.14); }
+        .reset-btn{ background: linear-gradient(90deg,#ff9a9e,#fecfef); color:#111; }
+
+        /* Particles container (absolute) */
+        .particles{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+
+        /* particle circle */
+        .particle{ position:absolute; border-radius:50%; opacity:0.12; filter:blur(6px); }
+
+        /* animation */
+        @keyframes float {
+            0%{ transform: translateY(0) rotate(0deg); opacity:0; }
+            10%{ opacity:1; }
+            90%{ opacity:1; }
+            100%{ transform: translateY(-120vh) rotate(360deg); opacity:0; }
+        }
+
+        /* ===== COMPACT MOBILE LAYOUT ===== */
+        @media (max-width:900px){
+            .progress-container-365{ max-height:340px; height:340px; }
+            header{ padding:14px; }
+            h1{ font-size:1.6rem; }
+        }
+
+        @media (max-width:480px){
+            body{ padding:10px; }
+            .container{ gap:10px; }
+            header{ padding:12px; }
+            .card{ padding:12px; border-radius:12px; }
+            h1{ font-size:1.45rem; }
+            .subtitle{ font-size:0.86rem; }
+            .card-title{ font-size:1.05rem; }
+            .grid-container{ grid-template-columns: 1fr; gap:10px; }
+            .flex-container{ flex-direction:column; gap:8px; }
+            .form-control{ padding:8px 10px; font-size:0.9rem; border-radius:8px; }
+            table{ font-size:0.86rem; min-width:380px; }
+            .progress-container-365{ max-height:300px; height:300px; }
+            .checkbox{ width:24px; height:24px; }
+            .checkbox::before{ inset:3px }
+            .checkbox .check-icon{ width:12px; height:8px; }
+        }
+
+        /* small extra polish */
+        body::-webkit-scrollbar{ height:10px; width:10px; }
+        body::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.04); border-radius:10px }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header>
+            <h1>ТОРГОВЫЙ ТРЕКЕР</h1>
+            <p class="subtitle">Управляйте капиталом, анализируйте прогресс и достигайте финансовых целей</p>
+        </header>
+
+        <!-- Block 1: Motivational Quote -->
+        <div class="card">
+            <div class="quote" id="dailyQuote">
+                "Дисциплина важнее мотивации. Последовательность действий приводит к выдающимся результатам."
+                <span class="author">— Джеймс Клир</span>
+            </div>
+        </div>
+
+        <!-- Block 2: Progress -->
+        <div class="card">
+            <h2 class="card-title">Прогресс</h2>
+            <div class="grid-container">
+                <div class="data-card">
+                    <div class="data-title">Текущий баланс</div>
+                    <div class="data-value" id="currentBalance">$1,842.50</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="data-title">Закрыто дней</div>
+                    <div class="data-value" id="completedDays">127</div>
+                    <div class="data-title" style="margin-top:6px;font-size:0.82rem;color:var(--muted-2)">из 365</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="data-title">Дневной план</div>
+                    <div class="data-value" id="todayPlan">$27.64</div>
+                    <div class="data-title" style="margin-top:6px;font-size:0.82rem;color:var(--muted-2)">Сегодняшняя цель</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Block 3: Balance Distribution Table -->
+        <div class="card balance-header">
+            <h2 class="card-title">Распределение баланса</h2>
+
+            <!-- Ultra Switch -->
+            <div class="ultra-switch switch-row">
+                <label class="switch">
+                    <input type="checkbox" id="ultraMode">
+                    <span class="slider" aria-hidden="true"></span>
+                </label>
+                <span class="ultra-label" id="ultraLabel" style="color:var(--muted);font-weight:600">Режим ULTRA</span>
+            </div>
+
+            <!-- Controls for Ultra mode -->
+            <div class="flex-container" id="ultraControls" style="display:none;">
+                <div class="flex-item">
+                    <label for="ultraStartBalance" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Стартовый баланс ($):</label>
+                    <input type="number" id="ultraStartBalance" class="form-control" value="100" min="0" step="0.01">
+                </div>
+
+                <!-- Warning for Ultra mode -->
+                <div class="balance-warning" id="ultraWarning">
+                    <span class="warning-icon">⚠</span>
+                    Недостаточный баланс! Пополните на:
+                    <span class="required-amount" id="ultraRequiredAmount">$0.00</span>
+                </div>
+
+                <div class="flex-item">
+                    <label for="ultraSteps" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Ступени:</label>
+                    <select id="ultraSteps" class="form-control">
+                        <option value="6">6 ступеней</option>
+                        <option value="7">7 ступеней</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <label for="ultraFirstTradePercent" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">% на 1 сделку:</label>
+                    <input type="number" id="ultraFirstTradePercent" class="form-control" value="1" min="0" step="0.1">
+                </div>
+                <div class="flex-item">
+                    <label for="ultraAssetProfitability" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Доходность по активу (%):</label>
+                    <input type="number" id="ultraAssetProfitability" class="form-control" value="92" min="0" step="0.1">
+                </div>
+            </div>
+
+            <!-- Controls for Standard mode -->
+            <div class="flex-container" id="standardControls" style="margin-top:8px;">
+                <div class="flex-item">
+                    <label for="startBalance" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Стартовый баланс ($):</label>
+                    <input type="number" id="startBalance" class="form-control" value="100" min="0" step="0.01">
+                </div>
+
+                <!-- Warning for Standard mode -->
+                <div class="balance-warning" id="standardWarning">
+                    <span class="warning-icon">⚠</span>
+                    Недостаточный баланс! Пополните на:
+                    <span class="required-amount" id="standardRequiredAmount">$0.00</span>
+                </div>
+
+                <div class="flex-item">
+                    <label for="steps" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Ступени:</label>
+                    <select id="steps" class="form-control">
+                        <option value="6">6 ступеней</option>
+                        <option value="7">7 ступеней</option>
+                        <option value="8" selected>8 ступеней</option>
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <label for="firstTradePercent" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">% на 1 сделку:</label>
+                    <input type="number" id="firstTradePercent" class="form-control" value="1" min="0" step="0.1">
+                </div>
+                <div class="flex-item">
+                    <label for="martingaleCoefficient" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Коэф. Мартингейла:</label>
+                    <input type="number" id="martingaleCoefficient" class="form-control" value="2.2" min="0" step="0.01">
+                </div>
+                <div class="flex-item">
+                    <label for="assetProfitability" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Доходность по активу (%):</label>
+                    <input type="number" id="assetProfitability" class="form-control" value="92" min="0" step="0.1">
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="stepsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th id="amountColumn">Сумма<span class="ultra-header-percent"> (% от депозита)</span></th>
+                            <th id="cumulativeColumn">Сумма сделок (% от депозита)</th>
+                            <th>Прибыль</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Block 4: Compound Interest -->
+        <div class="card">
+            <h2 class="card-title">Сложный процент</h2>
+            <div class="flex-container" style="margin-top:6px;">
+                <div class="flex-item">
+                    <label for="initialDeposit" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Депозит ($):</label>
+                    <input type="number" id="initialDeposit" class="form-control" value="1000" min="0" step="0.01">
+                </div>
+                <div class="flex-item">
+                    <label for="dailyGrowth" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">% прироста:</label>
+                    <input type="number" id="dailyGrowth" class="form-control" value="1.5" min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top:10px;">
+                <table id="compoundTable">
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>Баланс ($)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compoundTableBody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Block 5: 365-Day Progress -->
+        <div class="card">
+            <h2 class="card-title">365-дневный прогресс</h2>
+            <div class="flex-container" style="margin-top:6px;">
+                <div class="flex-item">
+                    <label for="startDate" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Дата начала:</label>
+                    <input type="date" id="startDate" class="form-control" value="2025-06-01">
+                </div>
+                <div class="flex-item">
+                    <label for="currentDate" style="display:block;font-size:0.92rem;color:var(--muted-2);margin-bottom:6px;">Текущая дата:</label>
+                    <input type="date" id="currentDate" class="form-control">
+                </div>
+            </div>
+
+            <div class="progress-container-365" style="margin-top:12px;">
+                <table class="progress-table">
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>План ($)</th>
+                            <th>Факт ($)</th>
+                            <th>Прибыль ($)</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="progressTableBody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Comparison Block -->
+        <div class="card">
+            <h2 class="card-title">Сравнение с планом</h2>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <div class="data-title">План</div>
+                    <div class="data-value" id="plannedBalance">$6,425.73</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="data-title">Факт</div>
+                    <div class="data-value" id="actualBalance">$6,425.73</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="data-title">Отклонение</div>
+                    <div class="data-value" id="deviation">$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="card reset-container" style="text-align:center;">
+            <button class="btn reset-btn" id="resetProgress">Сбросить прогресс</button>
+        </div>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let completedDaysArray = new Array(365).fill(false);
+        let currentDayIndex = 1;
+        let lastClosedDay = 0; // Последний закрытый день
+        let actualBalance = 0; // Фактический баланс
+
+        // Проценты для режима Ultra
+        const ultraPercentages = {
+            6: [1, 1.5, 3.5, 8, 20, 60],
+            7: [1, 1.5, 3.5, 8, 20, 60, 150]
+        };
+
+        // Цитаты для мотивации
+        const quotes = [
+            {text: "Рискуйте только тем капиталом, который вы готовы потерять.", author: "Уоррен Баффет"},
+            {text: "Рынки могут оставаться иррациональными дольше, чем вы можете оставаться платежеспособными.", author: "Джон Мейнард Кейнс"},
+            {text: "Покупай, когда на улицах кровь.", author: "Барон Ротшильд"},
+            {text: "Время на вашей стороне, когда вы владеете акциями.", author: "Питер Линч"},
+            {text: "Цена - это то, что вы платите. Ценность - это то, что вы получаете.", author: "Уоррен Баффет"},
+            {text: "Дисциплина важнее мотивации. Последовательность действий приводит к выдающимся результатам.", author: "Джеймс Клир"}
+        ];
+
+        // Форматирование чисел с разделителями
+        function formatNumber(num, isInteger = false) {
+            if (num === null || num === undefined) return '';
+            if (isInteger) {
+                return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            } else {
+                return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            }
+        }
+
+        // Сохранение данных в localStorage
+        function saveData() {
+            const data = {
+                steps: document.getElementById('steps') ? document.getElementById('steps').value : 8,
+                ultraSteps: document.getElementById('ultraSteps') ? document.getElementById('ultraSteps').value : '6',
+                startBalance: document.getElementById('startBalance') ? document.getElementById('startBalance').value : 100,
+                ultraStartBalance: document.getElementById('ultraStartBalance') ? document.getElementById('ultraStartBalance').value : 100,
+                firstTradePercent: document.getElementById('firstTradePercent') ? document.getElementById('firstTradePercent').value : 1,
+                ultraFirstTradePercent: document.getElementById('ultraFirstTradePercent') ? document.getElementById('ultraFirstTradePercent').value : 1,
+                martingaleCoefficient: document.getElementById('martingaleCoefficient') ? document.getElementById('martingaleCoefficient').value : 2.2,
+                assetProfitability: document.getElementById('assetProfitability') ? document.getElementById('assetProfitability').value : 92,
+                ultraAssetProfitability: document.getElementById('ultraAssetProfitability') ? document.getElementById('ultraAssetProfitability').value : 92,
+                initialDeposit: document.getElementById('initialDeposit') ? document.getElementById('initialDeposit').value : 1000,
+                dailyGrowth: document.getElementById('dailyGrowth') ? document.getElementById('dailyGrowth').value : 1.5,
+                startDate: document.getElementById('startDate') ? document.getElementById('startDate').value : '',
+                currentDate: document.getElementById('currentDate') ? document.getElementById('currentDate').value : '',
+                completedDays: completedDaysArray,
+                ultraMode: document.getElementById('ultraMode') ? document.getElementById('ultraMode').checked : false
+            };
+            try {
+                localStorage.setItem('tradingTrackerData', JSON.stringify(data));
+            } catch (e) {
+                console.warn('LocalStorage save failed', e);
+            }
+        }
+
+        // Загрузка данных из localStorage
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem('tradingTrackerData'));
+            const today = new Date().toISOString().split('T')[0];
+
+            if (data) {
+                if (document.getElementById('steps')) document.getElementById('steps').value = data.steps || 8;
+                if (document.getElementById('ultraSteps')) document.getElementById('ultraSteps').value = data.ultraSteps || '6';
+                if (document.getElementById('startBalance')) document.getElementById('startBalance').value = data.startBalance || 100;
+                if (document.getElementById('ultraStartBalance')) document.getElementById('ultraStartBalance').value = data.ultraStartBalance || 100;
+                if (document.getElementById('firstTradePercent')) document.getElementById('firstTradePercent').value = data.firstTradePercent || 1;
+                if (document.getElementById('ultraFirstTradePercent')) document.getElementById('ultraFirstTradePercent').value = data.ultraFirstTradePercent || 1;
+                if (document.getElementById('martingaleCoefficient')) document.getElementById('martingaleCoefficient').value = data.martingaleCoefficient || 2.2;
+                if (document.getElementById('assetProfitability')) document.getElementById('assetProfitability').value = data.assetProfitability || 92;
+                if (document.getElementById('ultraAssetProfitability')) document.getElementById('ultraAssetProfitability').value = data.ultraAssetProfitability || 92;
+                if (document.getElementById('initialDeposit')) document.getElementById('initialDeposit').value = data.initialDeposit || 1000;
+                if (document.getElementById('dailyGrowth')) document.getElementById('dailyGrowth').value = data.dailyGrowth || 1.5;
+                if (document.getElementById('startDate')) document.getElementById('startDate').value = data.startDate || "2025-06-01";
+                if (document.getElementById('currentDate')) document.getElementById('currentDate').value = today;
+                completedDaysArray = data.completedDays || new Array(365).fill(false);
+
+                if (data.ultraMode && document.getElementById('ultraMode')) {
+                    document.getElementById('ultraMode').checked = true;
+                }
+            } else {
+                if (document.getElementById('currentDate')) document.getElementById('currentDate').value = today;
+                completedDaysArray = new Array(365).fill(false);
+            }
+        }
+
+        // Создание частиц фона
+        function createParticles() {
+            const container = document.getElementById('particles');
+            if (!container) return;
+            // clear
+            container.innerHTML = '';
+            const particleCount = 22;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                const size = Math.random() * 12 + 6;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100 + 50;
+                const delay = Math.random() * 12;
+                const duration = 18 + Math.random() * 18;
+                const r = Math.floor(Math.random() * 120 + 100);
+                const g = Math.floor(Math.random() * 120 + 100);
+                const b = Math.floor(Math.random() * 150 + 80);
+                const a = (Math.random() * 0.25) + 0.06;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.background = `rgba(${r},${g},${b},${a})`;
+                particle.style.filter = `blur(${Math.random()*6 + 2}px)`;
+                particle.style.animation = `float ${duration}s linear ${delay}s infinite`;
+                particle.style.opacity = '0.12';
+                container.appendChild(particle);
+            }
+        }
+
+        // Расчет требуемой суммы для всех ступеней
+        function calculateRequiredAmount() {
+            const ultraMode = document.getElementById('ultraMode').checked;
+
+            if (ultraMode) {
+                const ultraSteps = parseInt(document.getElementById('ultraSteps').value);
+                const startBalance = parseFloat(document.getElementById('ultraStartBalance').value) || 0;
+                const firstTradePercent = parseFloat(document.getElementById('ultraFirstTradePercent').value) || 1;
+
+                const basePercentages = ultraPercentages[ultraSteps];
+                const ultraPercents = basePercentages.map(p => p * (firstTradePercent / 1));
+                const totalPercent = ultraPercents.reduce((sum, p) => sum + p, 0);
+                const requiredAmount = startBalance * totalPercent / 100;
+
+                return requiredAmount;
+            } else {
+                const steps = parseInt(document.getElementById('steps').value);
+                const startBalance = parseFloat(document.getElementById('startBalance').value) || 0;
+                const firstTradePercent = parseFloat(document.getElementById('firstTradePercent').value) || 1;
+                const martingaleCoefficient = parseFloat(document.getElementById('martingaleCoefficient').value) || 2.2;
+
+                let requiredAmount = 0;
+                let currentTrade = startBalance * (firstTradePercent / 100);
+
+                for (let i = 1; i <= steps; i++) {
+                    requiredAmount += currentTrade;
+                    currentTrade *= martingaleCoefficient;
+                }
+
+                return requiredAmount;
+            }
+        }
+
+        // Обновление предупреждений о балансе
+        function updateBalanceWarnings() {
+            const ultraMode = document.getElementById('ultraMode').checked;
+            const requiredAmount = calculateRequiredAmount();
+
+            if (ultraMode) {
+                const startBalance = parseFloat(document.getElementById('ultraStartBalance').value) || 0;
+                const warningElement = document.getElementById('ultraWarning');
+                const amountElement = document.getElementById('ultraRequiredAmount');
+
+                if (requiredAmount > startBalance) {
+                    const additional = requiredAmount - startBalance;
+                    amountElement.textContent = '$' + formatNumber(additional);
+                    warningElement.style.display = 'block';
+                } else {
+                    warningElement.style.display = 'none';
+                }
+
+                if (document.getElementById('standardWarning')) document.getElementById('standardWarning').style.display = 'none';
+            } else {
+                const startBalance = parseFloat(document.getElementById('startBalance').value) || 0;
+                const warningElement = document.getElementById('standardWarning');
+                const amountElement = document.getElementById('standardRequiredAmount');
+
+                if (requiredAmount > startBalance) {
+                    const additional = requiredAmount - startBalance;
+                    amountElement.textContent = '$' + formatNumber(additional);
+                    warningElement.style.display = 'block';
+                } else {
+                    warningElement.style.display = 'none';
+                }
+
+                if (document.getElementById('ultraWarning')) document.getElementById('ultraWarning').style.display = 'none';
+            }
+        }
+
+        // Расчет таблицы распределения баланса
+        function calculateStepsTable() {
+            const ultraMode = document.getElementById('ultraMode').checked;
+            let tableHTML = '';
+
+            if (ultraMode) {
+                const ultraSteps = parseInt(document.getElementById('ultraSteps').value);
+                const startBalance = parseFloat(document.getElementById('ultraStartBalance').value);
+                const firstTradePercent = parseFloat(document.getElementById('ultraFirstTradePercent').value);
+                const assetProfitability = parseFloat(document.getElementById('ultraAssetProfitability').value) / 100;
+
+                const basePercentages = ultraPercentages[ultraSteps];
+                const ultraPercents = basePercentages.map(p => p * (firstTradePercent / 1));
+
+                let totalPreviousTrades = 0;
+                let cumulativeAmount = 0;
+
+                for (let i = 0; i < ultraPercents.length; i++) {
+                    const percent = ultraPercents[i];
+                    const currentTrade = startBalance * (percent / 100);
+                    cumulativeAmount += currentTrade;
+
+                    const netProfit = (currentTrade * assetProfitability) - totalPreviousTrades;
+                    totalPreviousTrades += currentTrade;
+
+                    const cumulativePercent = (cumulativeAmount / startBalance) * 100;
+
+                    tableHTML += `
+                        <tr>
+                            <td>${i+1}</td>
+                            <td>
+                                $${formatNumber(currentTrade, false)}
+                                <span class="ultra-amount-percent"> (${percent.toFixed(2)}%)</span>
+                            </td>
+                            <td>$${formatNumber(cumulativeAmount, false)} (${cumulativePercent.toFixed(2)}%)</td>
+                            <td>$${formatNumber(netProfit, false)}</td>
+                        </tr>
+                    `;
+                }
+            } else {
+                const steps = parseInt(document.getElementById('steps').value);
+                const startBalance = parseFloat(document.getElementById('startBalance').value);
+                const firstTradePercent = parseFloat(document.getElementById('firstTradePercent').value) / 100;
+                const martingaleCoefficient = parseFloat(document.getElementById('martingaleCoefficient').value);
+                const assetProfitability = parseFloat(document.getElementById('assetProfitability').value) / 100;
+
+                let totalPreviousTrades = 0;
+                let currentTrade = startBalance * firstTradePercent;
+                let cumulativeAmount = 0;
+
+                for (let i = 1; i <= steps; i++) {
+                    cumulativeAmount += currentTrade;
+
+                    const netProfit = (currentTrade * assetProfitability) - totalPreviousTrades;
+                    totalPreviousTrades += currentTrade;
+
+                    const cumulativePercent = (cumulativeAmount / startBalance) * 100;
+
+                    tableHTML += `
+                        <tr>
+                            <td>${i}</td>
+                            <td>$${formatNumber(currentTrade, false)}</td>
+                            <td>$${formatNumber(cumulativeAmount, false)} (${cumulativePercent.toFixed(2)}%)</td>
+                            <td>$${formatNumber(netProfit, false)}</td>
+                        </tr>
+                    `;
+
+                    currentTrade *= martingaleCoefficient;
+                }
+            }
+
+            const tbody = document.querySelector('#stepsTable tbody');
+            if (tbody) tbody.innerHTML = tableHTML;
+            saveData();
+            updateBalanceWarnings();
+        }
+
+        // Переключение режима Ultra
+        function toggleUltraMode() {
+            const ultraMode = document.getElementById('ultraMode').checked;
+            const ultraLabel = document.getElementById('ultraLabel');
+            const ultraControls = document.getElementById('ultraControls');
+            const standardControls = document.getElementById('standardControls');
+            const cumulativeColumn = document.getElementById('cumulativeColumn');
+            const amountColumn = document.getElementById('amountColumn');
+
+            if (ultraMode) {
+                if (ultraLabel) ultraLabel.innerHTML = 'РЕЖИМ <span style="color:#ff9a9e">ULTRA</span> АКТИВИРОВАН';
+                if (ultraControls) ultraControls.style.display = 'flex';
+                if (standardControls) standardControls.style.display = 'none';
+                if (cumulativeColumn) cumulativeColumn.style.display = '';
+                if (amountColumn) amountColumn.innerHTML = 'Сумма<span class="ultra-header-percent"> (% от депозита)</span>';
+            } else {
+                if (ultraLabel) ultraLabel.textContent = 'Режим ULTRA';
+                if (standardControls) standardControls.style.display = 'flex';
+                if (ultraControls) ultraControls.style.display = 'none';
+                if (cumulativeColumn) cumulativeColumn.style.display = '';
+                if (amountColumn) amountColumn.textContent = 'Сумма';
+            }
+
+            calculateStepsTable();
+        }
+
+        // Расчет сложного процента
+        function calculateCompoundInterest() {
+            const initialDeposit = parseFloat(document.getElementById('initialDeposit').value) || 1000;
+            const dailyGrowth = parseFloat(document.getElementById('dailyGrowth').value) || 1.5;
+            const growthRate = dailyGrowth / 100;
+
+            const compoundDays = [30, 60, 100, 200, 300, 365];
+            let tableHTML = '';
+
+            for (let i = 0; i < compoundDays.length; i++) {
+                const day = compoundDays[i];
+                const balance = initialDeposit * Math.pow(1 + growthRate, day);
+
+                tableHTML += `
+                    <tr>
+                        <td>${day}</td>
+                        <td>$${formatNumber(balance, true)}</td>
+                    </tr>
+                `;
+            }
+
+            const body = document.getElementById('compoundTableBody');
+            if (body) body.innerHTML = tableHTML;
+            saveData();
+        }
+
+        // Прокрутка к текущему дню
+        function scrollToCurrentDay() {
+            setTimeout(() => {
+                const currentDayRow = document.querySelector('.current-day');
+                if (currentDayRow) {
+                    const container = document.querySelector('.progress-container-365');
+                    if (!container) return;
+                    const rowTop = currentDayRow.offsetTop;
+                    const rowHeight = currentDayRow.offsetHeight;
+                    const scrollPosition = rowTop - (container.clientHeight / 2) + (rowHeight / 2);
+
+                    container.scrollTo({
+                        top: scrollPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 300);
+        }
+
+        // Расчет таблицы прогресса на 365 дней
+        function calculateProgressTable() {
+            const sdElem = document.getElementById('startDate');
+            const cdElem = document.getElementById('currentDate');
+            if (!sdElem || !cdElem) return;
+            const startDate = new Date(sdElem.value);
+            const currentDate = new Date(cdElem.value);
+            const initialDeposit = parseFloat(document.getElementById('initialDeposit').value) || 1000;
+            const dailyGrowth = parseFloat(document.getElementById('dailyGrowth').value) || 1.5;
+            const growthRate = dailyGrowth / 100;
+
+            // Расчет текущего дня
+            const diffTime = Math.abs(currentDate - startDate);
+            currentDayIndex = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            // Рассчитываем фактический баланс
+            actualBalance = initialDeposit;
+            lastClosedDay = 0;
+            let completedCount = 0;
+
+            // Сначала найдем последний закрытый день и общий баланс
+            for (let day = 1; day <= 365; day++) {
+                if (completedDaysArray[day-1]) {
+                    actualBalance = actualBalance * (1 + growthRate);
+                    completedCount++;
+                    lastClosedDay = day;
+                }
+            }
+
+            let tableHTML = '';
+            let dailyPlanValue = 0;
+            let runningBalance = initialDeposit; // Для последовательного расчета баланса в таблице
+
+            for (let day = 1; day <= 365; day++) {
+                const isToday = day === currentDayIndex;
+                const isFuture = day > currentDayIndex;
+                const isCompleted = completedDaysArray[day-1];
+
+                // Планируемый баланс
+                const plannedBalance = initialDeposit * Math.pow(1 + growthRate, day - 1);
+                const dailyPlan = plannedBalance * growthRate;
+
+                // Расчет фактического баланса для дня
+                let dayBalance = '-';
+                let dayProfit = '-';
+
+                if (isCompleted) {
+                    // Рассчитываем баланс для этого дня последовательно
+                    // (важно для правильного отображения дней, закрытых с опережением)
+                    runningBalance = runningBalance * (1 + growthRate);
+                    dayBalance = runningBalance;
+                    dayProfit = dailyPlan;
+
+                    // Для текущего дня сохраняем план
+                    if (isToday) {
+                        dailyPlanValue = dailyPlan;
+                    }
+                } else if (day <= lastClosedDay) {
+                    // Для незакрытых дней, но которые идут после закрытых
+                    // (чтобы не сбрасывать runningBalance)
+                    runningBalance = runningBalance;
+                } else {
+                    runningBalance = initialDeposit;
+                }
+
+                tableHTML += `
+                    <tr ${isToday ? 'class="current-day"' : ''}>
+                        <td>${day}</td>
+                        <td>$${formatNumber(plannedBalance, false)}</td>
+                        <td>${isCompleted ? '$' + formatNumber(dayBalance, false) : '-'}</td>
+                        <td>${isCompleted ? '$' + formatNumber(dayProfit, false) : '-'}</td>
+                        <td>
+                            <div class="checkbox ${isCompleted ? 'checked' : ''}" 
+                                 data-day="${day}" tabindex="0">
+                                <span class="check-icon" aria-hidden="true"></span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // Обновление таблицы
+            const body = document.getElementById('progressTableBody');
+            if (body) body.innerHTML = tableHTML;
+
+            // Обновление верхних индикаторов
+            const completedElem = document.getElementById('completedDays');
+            if (completedElem) completedElem.textContent = completedCount;
+            const balanceElem = document.getElementById('currentBalance');
+            if (balanceElem) balanceElem.textContent = '$' + formatNumber(actualBalance, false);
+            const planElem = document.getElementById('todayPlan');
+            if (planElem) planElem.textContent = '$' + formatNumber(actualBalance * growthRate, false);
+
+            // Расчет отклонения
+            const plannedBalanceToday = initialDeposit * Math.pow(1 + growthRate, currentDayIndex - 1);
+            const deviation = actualBalance - plannedBalanceToday;
+
+            const plannedBalanceElem = document.getElementById('plannedBalance');
+            if (plannedBalanceElem) plannedBalanceElem.textContent = '$' + formatNumber(plannedBalanceToday, false);
+            const actualBalanceElem = document.getElementById('actualBalance');
+            if (actualBalanceElem) actualBalanceElem.textContent = '$' + formatNumber(actualBalance, false);
+            const deviationElem = document.getElementById('deviation');
+            if (deviationElem) deviationElem.textContent = deviation >= 0 ?
+                '+$' + formatNumber(Math.abs(deviation), false) : '-$' + formatNumber(Math.abs(deviation), false);
+
+            // Настройка чекбоксов и сохранение данных
+            setupCheckboxes();
+            saveData();
+        }
+
+        // Настройка обработчиков для чекбоксов
+        function setupCheckboxes() {
+            const checkboxes = document.querySelectorAll('#progressTableBody .checkbox');
+            checkboxes.forEach(checkbox => {
+                // click toggles
+                checkbox.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const day = parseInt(this.getAttribute('data-day'));
+                    const index = day - 1;
+
+                    if (this.classList.contains('checked')) {
+                        this.classList.remove('checked');
+                        completedDaysArray[index] = false;
+                    } else {
+                        this.classList.add('checked');
+                        completedDaysArray[index] = true;
+                    }
+
+                    calculateProgressTable();
+                });
+
+                // keyboard accessibility: Enter / Space toggle
+                checkbox.addEventListener('keydown', function(e){
+                    if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+        }
+
+        // Обновление цитаты дня
+        function updateDailyQuote() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            const el = document.getElementById('dailyQuote');
+            if (el) el.innerHTML =
+                `"${quote.text}"<span class="author">— ${quote.author}</span>`;
+        }
+
+        // Сброс прогресса
+        function resetProgress() {
+            if (confirm("Вы уверены, что хотите сбросить весь прогресс? Это действие нельзя отменить.")) {
+                completedDaysArray = new Array(365).fill(false);
+                if (document.getElementById('startDate')) document.getElementById('startDate').value = "2025-06-01";
+                if (document.getElementById('currentDate')) document.getElementById('currentDate').value = new Date().toISOString().split('T')[0];
+                calculateProgressTable();
+                alert("Прогресс успешно сброшен!");
+            }
+        }
+
+        // Обновление шага для числовых полей
+        function updateStep(input) {
+            if (!input) return;
+            let value = parseFloat(input.value);
+            if (isNaN(value)) {
+                value = input.id === 'martingaleCoefficient' ? 2.2 :
+                        input.id === 'dailyGrowth' ? 1.5 :
+                        input.id.includes('Profitability') ? 92 : 1;
+                input.value = value;
+            }
+
+            // Настройка шага в зависимости от типа поля
+            if (input.id === 'martingaleCoefficient') {
+                if (value >= 0.1) {
+                    input.step = "0.1";
+                } else {
+                    input.step = "0.01";
+                }
+            }
+            else if (input.id.includes('Profitability')) {
+                if (value >= 1) {
+                    input.step = "1";
+                } else {
+                    input.step = "0.1";
+                }
+            }
+            else if (input.id === 'dailyGrowth') {
+                if (value >= 0.1) {
+                    input.step = "0.1";
+                } else {
+                    input.step = "0.01";
+                }
+            }
+            else if (input.id.includes('Percent')) {
+                if (value >= 0.1) {
+                    input.step = "0.1";
+                } else {
+                    input.step = "0.01";
+                }
+            }
+        }
+
+        // Валидация неотрицательных чисел
+        function validateNonNegative(input) {
+            if (!input) return;
+            if (parseFloat(input.value) < 0) {
+                input.value = 0;
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            createParticles();
+            updateDailyQuote();
+            loadData();
+
+            // Первоначальные расчеты
+            calculateStepsTable();
+            calculateCompoundInterest();
+            calculateProgressTable();
+            scrollToCurrentDay();
+
+            // Обработчики событий — защитные проверки на наличие элементов добавлены
+            if (document.getElementById('steps')) document.getElementById('steps').addEventListener('change', calculateStepsTable);
+            if (document.getElementById('ultraSteps')) document.getElementById('ultraSteps').addEventListener('change', calculateStepsTable);
+            if (document.getElementById('startBalance')) document.getElementById('startBalance').addEventListener('input', calculateStepsTable);
+            if (document.getElementById('ultraStartBalance')) document.getElementById('ultraStartBalance').addEventListener('input', calculateStepsTable);
+
+            if (document.getElementById('firstTradePercent')) document.getElementById('firstTradePercent').addEventListener('input', function() {
+                validateNonNegative(this);
+                updateStep(this);
+                calculateStepsTable();
+            });
+            if (document.getElementById('ultraFirstTradePercent')) document.getElementById('ultraFirstTradePercent').addEventListener('input', function() {
+                validateNonNegative(this);
+                updateStep(this);
+                calculateStepsTable();
+            });
+            if (document.getElementById('martingaleCoefficient')) document.getElementById('martingaleCoefficient').addEventListener('input', function() {
+                validateNonNegative(this);
+                updateStep(this);
+                calculateStepsTable();
+            });
+            if (document.getElementById('assetProfitability')) document.getElementById('assetProfitability').addEventListener('input', function() {
+                validateNonNegative(this);
+                updateStep(this);
+                calculateStepsTable();
+            });
+            if (document.getElementById('ultraAssetProfitability')) document.getElementById('ultraAssetProfitability').addEventListener('input', function() {
+                validateNonNegative(this);
+                updateStep(this);
+                calculateStepsTable();
+            });
+
+            if (document.getElementById('initialDeposit')) document.getElementById('initialDeposit').addEventListener('input', function() {
+                validateNonNegative(this);
+                calculateCompoundInterest();
+                calculateProgressTable();
+            });
+
+            if (document.getElementById('dailyGrowth')) document.getElementById('dailyGrowth').addEventListener('input', function() {
+                validateNonNegative(this);
+                updateStep(this);
+                calculateCompoundInterest();
+                calculateProgressTable();
+            });
+
+            if (document.getElementById('startDate')) document.getElementById('startDate').addEventListener('change', function() {
+                calculateProgressTable();
+                scrollToCurrentDay();
+            });
+
+            if (document.getElementById('currentDate')) document.getElementById('currentDate').addEventListener('change', function() {
+                calculateProgressTable();
+                scrollToCurrentDay();
+            });
+
+            if (document.getElementById('resetProgress')) document.getElementById('resetProgress').addEventListener('click', resetProgress);
+
+            if (document.getElementById('ultraMode')) document.getElementById('ultraMode').addEventListener('change', toggleUltraMode);
+            toggleUltraMode();
+
+            // Инициализация шагов для полей ввода
+            if (document.getElementById('firstTradePercent')) updateStep(document.getElementById('firstTradePercent'));
+            if (document.getElementById('ultraFirstTradePercent')) updateStep(document.getElementById('ultraFirstTradePercent'));
+            if (document.getElementById('martingaleCoefficient')) updateStep(document.getElementById('martingaleCoefficient'));
+            if (document.getElementById('assetProfitability')) updateStep(document.getElementById('assetProfitability'));
+            if (document.getElementById('ultraAssetProfitability')) updateStep(document.getElementById('ultraAssetProfitability'));
+            if (document.getElementById('dailyGrowth')) updateStep(document.getElementById('dailyGrowth'));
+
+            // Валидация всех числовых полей
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    validateNonNegative(this);
+                });
+            });
+        };
+    </script>
+
+    <!-- Particle float keyframes (keeps animation) -->
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+
+    <script>
+        // After window load we may want to ensure particles exist:
+        // createParticles already runs on onload, but for immediate fallback:
+        (function ensureParticles(){
+            const container = document.getElementById('particles');
+            if (!container) return;
+            // createParticles() will fill container (it's called in onload)
+        })();
+    </script>
+</body>
+</html>
